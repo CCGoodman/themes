@@ -2,7 +2,7 @@
 
 a collection of custom themes for Discord.
 
-# Getting Started
+# Using
 To use the themes, you'll need to first install one of the plugins. Here are the best ones:
 
 [Vencord](https://github.com/Vendicated/Vencord)
