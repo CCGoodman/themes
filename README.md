@@ -1,6 +1,6 @@
 # Discord Themes
 
-a collection of custom themes for Discord.
+some custom themes for Discord.
 
 # Using
 To use the themes, you'll need to first install one of the plugins. Here are the best ones:
