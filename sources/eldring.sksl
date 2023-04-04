@@ -1,9 +1,25 @@
-uniform half4 color;
+void draw(SkCanvas* canvas) {
+  // Turn `image` into an SkShader:
+  sk_sp<SkShader> imageShader = image->makeShader(SkSamplingOptions(SkFilterMode::kLinear));
 
-void main(inout half4 color) {
-    // Calculate the luminance of the current pixel
-    half luminance = dot(color.rgb, half3(0.2126, 0.7152, 0.0722));
-    
-    // Adjust the color towards gold based on the luminance
-    color.rgb = mix(color.rgb, half3(1.0, 0.843, 0.0), pow(luminance, 1.5));
+  const char* sksl =
+    "uniform shader image;"
+    "half4 main(float2 coord) {"
+    "  return image.eval(coord).bgra;"  // Sample 'image', then swap red and blue
+    "}";
+
+  // Parse the SkSL, and create an SkRuntimeEffect object:
+  auto [effect, err] = SkRuntimeEffect::MakeForShader(SkString(sksl));
+
+  // SkRuntimeEffect::makeShader expects an SkSpan<ChildPtr>, one per `uniform shader`:
+  SkRuntimeEffect::ChildPtr children[] = { imageShader };
+
+  // Create an SkShader from our SkSL, with `imageShader` bound to `image`:
+  sk_sp<SkShader> myShader = effect->makeShader(/*uniforms=*/ nullptr,
+                                                /*children=*/ { children, 1 });
+
+  // Fill the surface with `myShader`:
+  SkPaint p;
+  p.setShader(myShader);
+  canvas->drawPaint(p);
 }
